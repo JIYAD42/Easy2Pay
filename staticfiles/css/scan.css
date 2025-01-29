@@ -1,0 +1,6 @@
+#reader {
+    margin: auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}

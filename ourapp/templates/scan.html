@@ -1,0 +1,43 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+    {% include 'navbar.html' %}
+    <div class="min-h-screen flex flex-col items-center">
+        <h1 class="text-4xl font-bold text-blue-600 mt-6">QR Code Scanner</h1>
+        <div id="reader" class="w-64 h-64 bg-gray-200 mt-8"></div>
+        <div id="result" class="mt-4 text-green-600 text-lg"></div>
+    </div>
+    <script src="{% static 'js/html5-qrcode.min.js' %}"></script>
+    <script>
+        window.onload = () => {
+            const qrReader = new Html5Qrcode("reader");
+            qrReader
+                .start(
+                    { facingMode: "environment" }, // Use rear camera
+                    {
+                        fps: 10,
+                        qrbox: { width: 250, height: 250 }, // Scanning area
+                    },
+                    (decodedText) => {
+                        qrReader.stop();
+                        document.getElementById("result").textContent = `Scanned Code: ${decodedText}`;
+                        window.location.href = `check_qr/?code=${decodedText}`;
+                    },
+                    (errorMessage) => {
+                        console.warn(`Error scanning QR Code: ${errorMessage}`);
+                    }
+                )
+                .catch((err) => {
+                    console.error(`Unable to start QR Scanner: ${err}`);
+                    document.getElementById("result").textContent = "Camera access denied or unavailable.";
+                });
+        };
+    </script>
+</body>
+</html>

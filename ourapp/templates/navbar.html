@@ -1,0 +1,29 @@
+<!-- Navbar -->
+<nav class="bg-blue-500 text-white shadow">
+    <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+        <a href="/" class="text-2xl font-bold">easy2pay</a>
+        <div class="hidden md:flex space-x-6">
+            <a href="{% url 'home' %}" class="hover:text-blue-300">Home</a>
+            <a href="{% url 'scan' %}" class="hover:text-blue-300">Scan</a>
+            <a href="{% url 'cart' %}" class="hover:text-blue-300">Cart</a>
+            <a href="{% url 'profile' %}" class="hover:text-blue-300">Profile</a>
+        </div>
+        <button id="menu-btn" class="block md:hidden focus:outline-none">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+    </div>
+    <div id="menu" class="hidden md:hidden bg-blue-400 text-white px-4 py-2">
+        <a href="{% url 'home' %}" class="block py-2">Home</a>
+        <a href="{% url 'scan' %}" class="block py-2">Scan</a>
+        <a href="{% url 'cart' %}" class="block py-2">Cart</a>
+        <a href="{% url 'profile' %}" class="block py-2">Profile</a>
+    </div>
+</nav>
+
+<script>
+    const menuBtn = document.getElementById('menu-btn');
+    const menu = document.getElementById('menu');
+    menuBtn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+    });
+</script>

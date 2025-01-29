@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>easy2pay - Cart</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script> <!-- Include Razorpay SDK -->
+</head>
+<body class="bg-gray-100">
+    {% include 'navbar.html' %}
+    <div class="min-h-screen">
+        <div class="bg-blue-500 text-white py-4 text-center">
+            <h1 class="text-2xl font-semibold">easy2pay</h1>
+        </div>
+        <div class="p-4">
+            <h2 class="text-lg font-semibold text-gray-700">Cart Summary</h2>
+            <p class="text-lg mt-2 font-semibold text-blue-600">Total Amount: ₹{{ cart.total_price }}</p>
+            <div class="mt-4 space-y-4">
+                {% for item in cart %}
+                <div class="flex items-center bg-white shadow rounded p-4">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-16 h-16 rounded">
+                    <div class="ml-4 flex-grow">
+                        <h3 class="font-semibold">{{ item.product.name }}</h3>
+                        <p class="text-sm text-gray-500">Price: ₹{{ item.product.price }}</p>
+                        <div class="flex items-center mt-2">
+                            <button class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="updateQuantity('{{ item.product.id }}', -1)">-</button>
+                            <span class="mx-2">{{ item.quantity }}</span>
+                            <button class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="updateQuantity('{{ item.product.id }}', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="w-full mt-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" id="pay-button">
+                Proceed to Pay
+            </button>
+            <script>
+                document.getElementById('pay-button').onclick = function() {
+                    // Rename the variable to avoid redeclaration
+                    const amountFromServer = {{ amount }};
+                    fetch('/easy2pay/create_order/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ amount: amountFromServer })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.id) {
+                            const options = {
+                                key: '{{ RAZORPAY_KEY_ID }}', // Your Razorpay Key ID
+                                amount: data.amount, // Amount in paise
+                                currency: data.currency,
+                                name: 'easy2pay',
+                                description: 'Payment for cart items',
+                                order_id: data.id, // This is the order_id created by Razorpay
+                                handler: function (response) {
+                                    // Handle successful payment here
+                                    fetch('/payment/success/', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRFToken': '{{ csrf_token }}'
+                                        },
+                                        body: JSON.stringify({
+                                            payment_id: response.razorpay_payment_id,
+                                            order_id: data.id  // Pass the Razorpay order ID
+                                        })
+                                    })
+                                    .then(() => {
+                                        alert('Payment successful!');
+                                        window.location.href = 'payment_success/'; // Reload the page or redirect
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        alert('Error processing payment.');
+                                    });
+                                },
+                                prefill: {
+                                    name: '{{ user.username }}',
+                                    email: '{{ user.email }}',
+                                },
+                                theme: {
+                                    color: '#F37254'
+                                }
+                            };
+                            const rzp1 = new Razorpay(options);
+                            rzp1.open();
+                        } else {
+                            alert('Failed to create order. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    });
+                };
+            </script>
+            
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>easy2pay - Profile</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+    {% include 'navbar.html' %}
+    <div class="min-h-screen flex flex-col items-center">
+        <h1 class="text-4xl font-bold text-blue-600 mt-6">easy2pay</h1>
+        <div class="bg-white shadow-md rounded p-6 mt-6 w-full max-w-sm">
+            <div class="flex items-center">
+                <div class="w-20 h-20 bg-gray-300 rounded-full"></div>
+                <div class="ml-4">
+                    <h2 class="text-xl font-semibold">{{ user_name }}</h2>
+                </div>
+            </div>
+            <div class="mt-6 space-y-4">
+                <button class="w-full bg-gray-200 text-gray-700 py-2 rounded shadow hover:bg-gray-300">
+                    Purchase History
+                </button>
+                <button class="w-full bg-gray-200 text-gray-700 py-2 rounded shadow hover:bg-gray-300">
+                    Redeem Points
+                </button>
+                <button class="w-full bg-gray-200 text-gray-700 py-2 rounded shadow hover:bg-gray-300">
+                    Help
+                </button>
+                <button class="w-full bg-red-500 text-white py-2 rounded shadow hover:bg-red-600" onclick="confirmLogout()">
+                    Log Out
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function confirmLogout() {
+            if (confirm('Are you sure you want to log out?')) {
+                window.location.href = "{% url 'logout' %}";
+            }
+        }
+    </script>
+</body>
+</html>

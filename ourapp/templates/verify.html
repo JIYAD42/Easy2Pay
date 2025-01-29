@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>easy2pay - OTP Verification</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap'); /* Importing a fancy font */
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: url('bg7.jpg') no-repeat center center;
+            background-size: cover;
+            background-color: #996633; /* Lightened background */
+            color: #333; /* Dark gray text */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .header {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            background-color: #fff;
+            color: #333;
+            text-align: center;
+            padding: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+            font-family: 'Pacifico', cursive; /* Applying the fancy font */
+        }
+        .otp-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .otp-container h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: #555;
+        }
+        .otp-container input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .otp-container input:focus {
+            border-color: #007BFF;
+        }
+        .otp-container button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-confirm {
+            background-color: #28a745; /* Green */
+            color: white;
+        }
+        .btn-confirm:hover {
+            background-color: #218838;
+        }
+        .btn-resend {
+            background-color: #007BFF; /* Blue */
+            color: white;
+        }
+        .btn-resend:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>easy2pay</h1>
+    </div>
+    <div class="otp-container">
+        <h2>Enter OTP</h2>
+        <input type="text" maxlength="6" placeholder="Enter 6-digit OTP" oninput="validateInput(this)">
+        <a href="create.html"><button class="btn-confirm" onclick="confirmOTP()">Confirm</button></a>
+        <button class="btn-resend" onclick="resendOTP()">Resend</button>
+    </div>
+
+    <script>
+        // Restrict input to digits only
+        function validateInput(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+
+        function confirmOTP() {
+            alert('OTP Confirmed!');
+            // Add logic to validate the OTP and proceed
+        }
+
+        function resendOTP() {
+            alert('OTP Resent!');
+            // Add logic to resend the OTP
+        }
+    </script>
+</body>
+</html>

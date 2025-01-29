@@ -1,0 +1,99 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap'); /* Fancy font */
+
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: url('bg7.jpg') no-repeat center center;
+    background-size: cover;
+    background-color: #f7f7f7; /* Light gray background for the whole page */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Align top and bottom */
+    text-align: center;
+    height: 100vh;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    z-index: 1000;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 36px;
+    font-family: 'Pacifico', cursive;
+}
+
+/* Description Section with Background Image */
+.description-container {
+    margin-top: 105px; /* Push below the header */
+    padding: 40px 20px;
+    background-size: cover;
+    color: rgb(23, 23, 72);
+    border-radius: 10px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6); /* Text shadow for readability */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Light box shadow */
+    height: 650px;
+    gap: 20px;
+}
+
+.description {
+    font-size: 24px;
+    margin-top: 470px;
+}
+
+.start-btn {
+    padding: 15px 30px;
+    font-size: 18px;
+    color: white;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.start-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Icons Section */
+.icon-container {
+    display: flex;
+    justify-content: center;
+    gap: 50px; /* Spacing between icons */
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border-radius: 10px 10px 0 0;
+}
+
+.icon-container a {
+    text-decoration: none;
+    color: #ffffff; /* Darker color for icons */
+    font-size: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.icon-container a:hover {
+    color: #00bcd4;
+}
+
+.icon-label {
+    font-size: 14px;
+    margin-top: 5px;
+}
