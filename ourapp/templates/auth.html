@@ -1,34 +1,33 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>easy2pay - {{ form_title }}</title>
+    <title>easy2pay - Authentication</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen flex flex-col justify-center items-center">
-        <h1 class="text-4xl font-bold text-blue-600 mb-6">easy2pay</h1>
+        <h1 class="easy2pay">Easy2Pay</h1>
         <div class="bg-white shadow-md rounded px-8 py-6 w-full max-w-sm">
-            <h2 class="text-2xl font-semibold mb-4 text-gray-700">{{ form_title }}</h2>
-            <form method="post" class="space-y-4">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-                    {{ button_text }}
-                </button>
-            </form>
-            <div class="text-sm text-center mt-4 text-gray-500">
-                {{ toggle_text }} <a href="{{ toggle_url }}" class="text-blue-500 hover:underline">{{ toggle_text }}</a>
+            
+            <!-- Login Form -->
+            <div id="login-form">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-700">{{ form_title }}</h2>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="w-full bg-blue-500 text-black py-2 rounded hover:bg-blue-600">{{ button_text }}</button>
+                </form>
+                <div class="text-sm text-center mt-4 text-gray-500">
+                    <a href="{{ t_url }}">{{ t_text }}</a>
+                </div>
+                <div class="text-sm text-center mt-4 text-gray-500">
+                    <a href="{{ toggle_url }}">{{ toggle_text }}</a>
+                </div>
             </div>
-        </div>
-    </div>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
+
 </body>
 </html>

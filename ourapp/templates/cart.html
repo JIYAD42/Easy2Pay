@@ -1,106 +1,292 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>easy2pay - Cart</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script> <!-- Include Razorpay SDK -->
+    <title>Easy2Pay - Cart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root{
+            --custom-width: 100vw;
+            --design-width: 412;
+            --ratio: calc(var(--custom-width) / var(--design-width));
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            background: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+        }
+
+        .easy2pay {
+            width: 61.17%;
+            height: 48.24%;
+            top: 18.82%;
+            left: 4.61%;
+            z-index: 1;
+            transform: rotate(0deg);
+            text-align: left;
+            line-height: 0px;
+        }
+
+        .easy {
+            font-size: calc(40 * var(--ratio));
+            letter-spacing: calc(4 * var(--ratio));
+            line-height: calc(40 * var(--ratio));
+  
+            font-family: Inria Sans;
+            font-weight: 500;
+  
+            text-decoration: none;
+            text-transform: none;
+            white-space: pre-wrap;
+            color: #000000ff;
+        }
+        
+        .menu-icon {
+            font-size: 22px;
+            cursor: pointer;
+            color: #000000;
+        }
+        
+        .total {
+            display: flex;
+            align-items: center;
+            background-color: transparent;
+            border: 2px solid black;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px;
+        }
+
+        .total-amount {
+            color: black;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        /* Cart Item */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            background: #aab7c4;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 5px 15px;
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-details h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-details p {
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Buttons */
+        .cart-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .cart-buttons button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .remove-btn {
+            background: white;
+            border: 1px solid black;
+        }
+
+        .buy-btn {
+            background: black;
+            color: white;
+        }
+
+        #pay-button {
+            display: flex;
+            padding: 10px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 15px;
+            width: 93%;
+            position: fixed;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            height: 40px;
+            bottom: 60px; /* Adjust this based on your nav bar's height */
+            left: 49%;
+            transform: translateX(-52%);
+            z-index: 1000;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #ddd;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: black;
+            font-size: 14px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        /* Active Tab */
+        .nav-item.active {
+            color: gray;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    {% include 'navbar.html' %}
-    <div class="min-h-screen">
-        <div class="bg-blue-500 text-white py-4 text-center">
-            <h1 class="text-2xl font-semibold">easy2pay</h1>
-        </div>
-        <div class="p-4">
-            <h2 class="text-lg font-semibold text-gray-700">Cart Summary</h2>
-            <p class="text-lg mt-2 font-semibold text-blue-600">Total Amount: ₹{{ cart.total_price }}</p>
-            <div class="mt-4 space-y-4">
-                {% for item in cart %}
-                <div class="flex items-center bg-white shadow rounded p-4">
-                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-16 h-16 rounded">
-                    <div class="ml-4 flex-grow">
-                        <h3 class="font-semibold">{{ item.product.name }}</h3>
-                        <p class="text-sm text-gray-500">Price: ₹{{ item.product.price }}</p>
-                        <div class="flex items-center mt-2">
-                            <button class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="updateQuantity('{{ item.product.id }}', -1)">-</button>
-                            <span class="mx-2">{{ item.quantity }}</span>
-                            <button class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="updateQuantity('{{ item.product.id }}', 1)">+</button>
-                        </div>
+<body>
+
+<div class="container" id="cart-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="easy"><span class="easy2pay">Easy2Pay</span></div>
+        <a href="{% url 'home' %}" style="text-decoration: none;"><i class="fa fa-home menu-icon"></i></a>
+    </div>
+    <div class="total">
+        <p class="total-amount">Total Amount: ₹{{ amount }}</p>
+    </div>
+    <!-- Cart Item -->
+    {% if cart %}
+        {% for item in cart %}
+            <div class="cart-item">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                <div class="cart-item-details">
+                    <h2>{{ item.product.name }}</h2>
+                    <p>Price: ₹ {{ item.product.price }}</p>
+                    <p>Quantity: {{ item.quantity }}</p>
+                    <div class="cart-buttons">
+                        <button class="remove-btn" onclick="removeFromCart('{{ item.id }}')">Remove</button>
+                        <button class="buy-btn" onclick="redirectToPayment('{{ item.product.unique_code }}')">Buy</button>
                     </div>
                 </div>
-                {% endfor %}
             </div>
-            <button class="w-full mt-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" id="pay-button">
-                Proceed to Pay
-            </button>
-            <script>
-                document.getElementById('pay-button').onclick = function() {
-                    // Rename the variable to avoid redeclaration
-                    const amountFromServer = {{ amount }};
-                    fetch('/easy2pay/create_order/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({ amount: amountFromServer })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.id) {
-                            const options = {
-                                key: '{{ RAZORPAY_KEY_ID }}', // Your Razorpay Key ID
-                                amount: data.amount, // Amount in paise
-                                currency: data.currency,
-                                name: 'easy2pay',
-                                description: 'Payment for cart items',
-                                order_id: data.id, // This is the order_id created by Razorpay
-                                handler: function (response) {
-                                    // Handle successful payment here
-                                    fetch('/payment/success/', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRFToken': '{{ csrf_token }}'
-                                        },
-                                        body: JSON.stringify({
-                                            payment_id: response.razorpay_payment_id,
-                                            order_id: data.id  // Pass the Razorpay order ID
-                                        })
-                                    })
-                                    .then(() => {
-                                        alert('Payment successful!');
-                                        window.location.href = 'payment_success/'; // Reload the page or redirect
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                        alert('Error processing payment.');
-                                    });
-                                },
-                                prefill: {
-                                    name: '{{ user.username }}',
-                                    email: '{{ user.email }}',
-                                },
-                                theme: {
-                                    color: '#F37254'
-                                }
-                            };
-                            const rzp1 = new Razorpay(options);
-                            rzp1.open();
-                        } else {
-                            alert('Failed to create order. Please try again.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    });
-                };
-            </script>
-            
-        </div>
+        {% endfor %}
+    {% else %}
+        <p>Your cart is empty.</p>
+    {% endif %}
+
+    <a href="{% url 'payment' %}">
+        <button id="pay-button">Proceed to Pay</button>
+    </a>
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        
+        <a href="{% url 'scan' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-qrcode"></i><br>Scan
+        </div></a>
+        <a href="{% url 'cart' %}" style="text-decoration: none;"><div class="nav-item active">
+            <i class="fa fa-shopping-cart"></i><br>Cart
+        </div></a>
+        <a href="{% url 'offers' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-tag"></i><br>Offers
+        </div></a>
+        <a href="{% url 'points' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-gift"></i><br>Redeem Points
+        </div></a>
+        <a href="{% url 'profile' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-user"></i><br>Profile
+        </div></a>
     </div>
+</div>
+<script>
+    function redirectToPayment(uniqueCode) {
+        window.location.href = "{% url 'payment' %}?unique_code=" + uniqueCode;
+    }
+    function removeFromCart(itemId) {
+        fetch(`/easy2pay/remove_from_cart/${itemId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let cartItem = document.getElementById(`cart-item-${itemId}`);
+                if (cartItem) {
+                    cartItem.remove(); // Remove item from UI immediately
+                }
+                
+                // Check if cart is now empty and show a message
+                let cartItems = document.querySelectorAll(".cart-item");
+                if (cartItems.length === 0) {
+                    document.getElementById("cart-container").innerHTML = `
+                        <p>Your cart is empty. <a href="{% url 'home' %}">Continue shopping</a></p>
+                    `;
+                }
+            } else {
+                alert("Failed to remove item.");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+</script>
 </body>
 </html>

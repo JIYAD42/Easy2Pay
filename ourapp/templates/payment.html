@@ -1,43 +1,409 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy2Pay - QR Scan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        :root{
+            --custom-width: 100vw;
+            --design-width: 412;
+            --ratio: calc(var(--custom-width) / var(--design-width));
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            background: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            background: white;
+        }
+
+        .easy2pay {
+            width: 61.17%;
+            height: 48.24%;
+            top: 18.82%;
+            left: 4.61%;
+            z-index: 1;
+            transform: rotate(0deg);
+            text-align: left;
+            line-height: 0px;
+        }
+
+        .easy {
+            font-size: calc(40 * var(--ratio));
+            letter-spacing: calc(4 * var(--ratio));
+            line-height: calc(40 * var(--ratio));
+  
+            font-family: Inria Sans;
+            font-weight: 500;
+  
+            text-decoration: none;
+            text-transform: none;
+            white-space: pre-wrap;
+            color: #000000ff;
+        }
+
+        .menu-icon {
+            font-size: 22px;
+            cursor: pointer;
+            color: #000000;
+        }
+
+        .payment-container {
+            padding: 16px;
+        }
+
+        .payment-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3748;
+            }
+
+        .payment-box {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            margin-top: 16px;
+        }
+
+        .payment-box p {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.2); 
+        }
+
+        .product-table th, .product-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+
+        .product-table th {
+            background: #000000;
+            color: white;
+            font-weight: 600;
+        }
+
+        .product-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .total-row {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .total-row td {
+            color: #28a745;
+        }
+
+        .offer-label {
+            display: block;
+            margin-top: 16px;
+            color: #4a5568;
+            font-size: 16px;
+        }
+
+        .offer-select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 16px;
+            font-size: 16px;
+            color: #4a5568;
+        }
+
+        .checkbox-container input {
+            margin-right: 8px;
+        }
+
+        .pay-button {
+            width: 100%;
+            background-color: #000000;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 16px;
+        }
+
+        .pay-button:hover {
+            background-color: #218838;
+        }
+
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #ddd;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: black;
+            font-size: 14px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        /* Active Tab */
+        .nav-item.active {
+            color: gray;
+        }
+    </style>
 </head>
 <body>
-    <h1>Payment</h1>
-    <p>Amount: ₹{{ amount }}</p>
 
-    <button id="pay-button">Pay Now</button>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="easy"><span class="easy2pay">Easy2Pay</span></div>
+        <a href="{% url 'home' %}" style="text-decoration: none;"><i class="fa fa-home menu-icon"></i></a>
+    </div>
 
-    <form id="payment-success-form" action="{% url 'payment_success' %}" method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
-        <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
-        <input type="hidden" name="razorpay_signature" id="razorpay_signature">
-    </form>
+    <div class="payment-container">
+        <h2 class="payment-title">Payment Details</h2>
+        <div class="payment-box">
+            <p><strong>Total Price:</strong> ₹<span id="total-price"></span>{{ total_price }}</span></p>
+            <p><strong>Products:</strong></p>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Price (₹)</th>
+                        <th>Quantity/Weight</th>
+                        <th>Total (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in products_with_details %}
+                    <tr>
+                        <td class="product-name">{{ item.product.name }}</td>
+                        <td>₹{{ item.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    
+            <label for="offer-select" class="offer-label">Apply Offer:</label>
+            <select id="offer-select" class="offer-select">
+                <option value="0">No Offer</option>
+                {% for offer in offers %}
+                    <option value="{{ offer.discount_percentage }}" data-id="{{ offer.id }}">{{ offer.name }} - {{ offer.discount_percentage }}% Off</option>
+                {% endfor %}
+            </select>
+    
+            <div class="checkbox-container">
+                <input type="checkbox" id="redeem-points">
+                <span>Use {{ user_points }} Points (₹{{ user_points|floatformat:2 }})</span>
+            </div>
+    
+            <button id="pay-button" class="pay-button">
+                Proceed to Payment
+            </button>
+        </div>
+    </div>
 
-    <script>
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        
+        <a href="{% url 'scan' %}" style="text-decoration: none;"><div class="nav-item active">
+            <i class="fa fa-qrcode"></i><br>Scan
+        </div></a>
+        <a href="{% url 'cart' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-shopping-cart"></i><br>Cart
+        </div></a>
+        <a href="{% url 'offers' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-tag"></i><br>Offers
+        </div></a>
+        <a href="{% url 'points' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-gift"></i><br>Redeem Points
+        </div></a>
+        <a href="{% url 'profile' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-user"></i><br>Profile
+        </div></a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+const payButton = document.getElementById("pay-button");
+const offerSelect = document.getElementById("offer-select");
+const redeemPointsCheckbox = document.getElementById("redeem-points");
+let selectedOfferId = null;
+let discountPercentage = 0;
+let finalAmount = {{ total_price }}; // Base total price from template
+let userPoints = 0
+
+const itemId = "{{ item_id|default:'' }}";
+
+offerSelect.addEventListener('change', function() {
+    // Get the selected option
+    const selectedOption = offerSelect.options[offerSelect.selectedIndex];
+
+    // Get the discount percentage from the selected option
+    discountPercentage = selectedOption.value;
+});
+
+redeemPointsCheckbox.addEventListener('change', function() {
+    if (redeemPointsCheckbox.checked) {
+        // Checkbox is checked
+        userPoints = {{ user_points }};
+        // You can use userPoints as needed
+    }
+});
+
+let createdOrderId = null;
+
+function calculateFinalAmount() {
+    let discountAmount = (discountPercentage / 100) * finalAmount;
+    let pointsValue = (userPoints * 25) / 100;
+    let updatedAmount = finalAmount - discountAmount - pointsValue;
+    finalAmount = Math.max(updatedAmount, 1); // Ensure minimum ₹1
+    discountPercentage = 0;
+}
+
+payButton.addEventListener("click", function () {
+    calculateFinalAmount();
+    fetch("/easy2pay/create_order/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+            amount: finalAmount,
+            item_id: itemId ? itemId : null
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        createdOrderId = data.id;
+        if (!data.id) {
+            alert("Failed to create order. Please try again.");
+            return;
+        }
+
         const options = {
-            "key": "{{ razorpay_api_key }}",
-            "amount": "{{ amount|floatformat:2 }}" * 100,
-            "currency": "INR",
-            "name": "easy2pay",
-            "description": "Test Payment",
-            "order_id": "{{ order_id }}", // Razorpay Order ID
-            "handler": function(response) {
-                document.getElementById("razorpay_payment_id").value = response.razorpay_payment_id;
-                document.getElementById("razorpay_order_id").value = response.razorpay_order_id;
-                document.getElementById("razorpay_signature").value = response.razorpay_signature;
-                document.getElementById("payment-success-form").submit();
+            key: "{{ RAZORPAY_KEY_ID }}",
+            amount: data.amount,
+            currency: data.currency,
+            name: "Easy2Pay",
+            description: "Payment for cart items",
+            order_id: data.id,
+            handler: function (response) {
+                fetch("/easy2pay/payment_success/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        payment_id: response.razorpay_payment_id,
+                        order_id: data.id,
+                        amount: finalAmount,
+                        used_points: userPoints
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = `/easy2pay/payment_confirm/?order_id=${createdOrderId}&payment_id=${response.razorpay_payment_id}&amount=${finalAmount}&used_points=${userPoints}`;
+                    } else {
+                        console.error("Order ID is missing in response:", data);
+                        alert("Error: Order ID is missing. Please contact support.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Payment confirmation error:", error);
+                    alert("Error processing payment.");
+                });
             }
         };
 
-        const rzp = new Razorpay(options);
+        const rzp1 = new Razorpay(options);
+        rzp1.open();
+    })
+    .catch(error => {
+        console.error("Error during order creation:", error);
+        alert("An error occurred. Please try again.");
+    });
+});
+});
 
-        document.getElementById("pay-button").onclick = function(e) {
-            rzp.open();
-            e.preventDefault();
-        };
-    </script>
+</script>
 </body>
 </html>

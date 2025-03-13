@@ -1,3 +1,8 @@
+:root {
+    --custom-width: 100vw;
+    --design-width: 412;
+    --ratio: calc(var(--custom-width) / var(--design-width));
+  }
 form {
     max-width: 400px;
     margin: auto;
@@ -10,4 +15,17 @@ form {
 form button {
     width: 100%;
     margin-top: 15px;
+}
+.easy2pay {
+    font-size: calc(40 * var(--ratio));
+    letter-spacing: calc(4 * var(--ratio));
+    line-height: calc(40 * var(--ratio));
+  
+    font-family: Inria Sans;
+    font-weight: 700;
+  
+    text-decoration: none;
+    text-transform: none;
+    white-space: pre-wrap;
+    color: rgb(0, 0, 0);
 }

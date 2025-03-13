@@ -1,19 +1,166 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <title>Easy2Pay - Scan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root{
+            --custom-width: 100vw;
+            --design-width: 412;
+            --ratio: calc(var(--custom-width) / var(--design-width));
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            background: white;
+            height: 840px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+        }
+
+        .easy2pay {
+            width: 61.17%;
+            height: 48.24%;
+            top: 18.82%;
+            left: 4.61%;
+            z-index: 1;
+            transform: rotate(0deg);
+            text-align: left;
+            line-height: 0px;
+        }
+
+        .easy {
+            font-size: calc(40 * var(--ratio));
+            letter-spacing: calc(4 * var(--ratio));
+            line-height: calc(40 * var(--ratio));
+  
+            font-family: Inria Sans;
+            font-weight: 500;
+  
+            text-decoration: none;
+            text-transform: none;
+            white-space: pre-wrap;
+            color: #000000ff;
+        }
+
+        .menu-icon {
+            font-size: 22px;
+            cursor: pointer;
+            color: #000000ff;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #ddd;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .rectangle-2-39310 {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 2%;
+            bottom: 20%; /* Adjust this to match the nav height */
+            left: 0;
+            z-index: 3;
+            border-radius: 42px;
+            background: black; /* Ensures no white space */
+}
+
+        /* .rectangle-2-39310 {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 9.27%;
+            left: 0%;
+            z-index: 3;
+            transform: rotate(0deg);
+            border-radius: 42px;
+        }
+ */
+        .nav-item {
+            text-align: center;
+            color: black;
+            font-size: 14px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        /* Active Tab */
+        .nav-item.active {
+            color: gray;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    {% include 'navbar.html' %}
-    <div class="min-h-screen flex flex-col items-center">
-        <h1 class="text-4xl font-bold text-blue-600 mt-6">QR Code Scanner</h1>
-        <div id="reader" class="w-64 h-64 bg-gray-200 mt-8"></div>
-        <div id="result" class="mt-4 text-green-600 text-lg"></div>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="easy"><span class="easy2pay">Easy2Pay</span></div>
+        <a href="{% url 'home' %}" style="text-decoration: none;"><i class="fa fa-home menu-icon"></i></a>
     </div>
-    <script src="{% static 'js/html5-qrcode.min.js' %}"></script>
+
+    <div class="rectangle-2-39310" id="reader"></div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        
+        <a href="{% url 'scan' %}" style="text-decoration: none;"><div class="nav-item active">
+            <i class="fa fa-qrcode"></i><br>Scan
+        </div></a>
+        <a href="{% url 'cart' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-shopping-cart"></i><br>Cart
+        </div></a>
+        <a href="{% url 'offers' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-tag"></i><br>Offers
+        </div></a>
+        <a href="{% url 'points' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-gift"></i><br>Redeem Points
+        </div></a>
+        <a href="{% url 'profile' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-user"></i><br>Profile
+        </div></a>
+    </div>
+</div>
+<script src="{% static 'js/html5-qrcode.min.js' %}"></script>
     <script>
         window.onload = () => {
             const qrReader = new Html5Qrcode("reader");
@@ -26,7 +173,6 @@
                     },
                     (decodedText) => {
                         qrReader.stop();
-                        document.getElementById("result").textContent = `Scanned Code: ${decodedText}`;
                         window.location.href = `check_qr/?code=${decodedText}`;
                     },
                     (errorMessage) => {

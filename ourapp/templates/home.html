@@ -1,35 +1,254 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>easy2pay - Home</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <title>Easy2Pay - QR Scan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root{
+            --custom-width: 100vw;
+            --design-width: 412;
+            --ratio: calc(var(--custom-width) / var(--design-width));
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            background: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            background: white;
+        }
+
+        .easy2pay {
+            width: 61.17%;
+            height: 48.24%;
+            top: 18.82%;
+            left: 4.61%;
+            z-index: 1;
+            transform: rotate(0deg);
+            text-align: left;
+            line-height: 0px;
+        }
+
+        .easy {
+            font-size: calc(40 * var(--ratio));
+            letter-spacing: calc(4 * var(--ratio));
+            line-height: calc(40 * var(--ratio));
+  
+            font-family: Inria Sans;
+            font-weight: 500;
+  
+            text-decoration: none;
+            text-transform: none;
+            white-space: pre-wrap;
+            color: #000000ff;
+        }
+
+        /* Main Content */
+        .main-content {
+            text-align: left;
+        }
+
+        .caption {
+            width: 61.17%;
+            height: 48.24%;
+            top: 18.82%;
+            left: 4.61%;
+            z-index: 1;
+            transform: rotate(0deg);
+            text-align: left;
+            line-height: 0px;
+        }
+
+        .capdiv {
+            margin-left: 20px;
+            font-size: calc(26 * var(--ratio));
+            letter-spacing: calc(4 * var(--ratio));
+            line-height: calc(34 * var(--ratio));
+  
+            font-family: Inria Sans;
+            font-weight: 400;
+  
+            text-decoration: none;
+            text-transform: none;
+            white-space: pre-wrap;
+            color: #000000ff;
+        }
+
+        /* Image Placeholder */
+        .image-container {
+            padding-top: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 700px;
+        }
+        .slider img {
+            width: 89%;
+            height: 600px;
+            display: none;
+            border-radius: 20px;
+            margin: 0 auto; 
+        }
+
+        .slider img.active {
+            display: block;
+        }
+
+        .dots {
+            text-align: center;
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            margin: 0 5px;
+            background-color: gray;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background-color: rgb(0, 0, 0);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #ddd;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: black;
+            font-size: 14px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        /* Active Tab */
+        .nav-item.active {
+            color: gray;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    {% include 'navbar.html' %}
-    <div class="min-h-screen flex flex-col items-center justify-center text-center">
-        <h1 class="text-4xl font-bold text-blue-600 mb-6">easy2pay</h1>
-        <p class="text-lg text-gray-600 max-w-md mb-6">
-            Experience seamless shopping and effortless payments with easy2pay. Start your journey today and enjoy convenience like never before.
-        </p>
-        <button class="px-6 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600">
-            Start Purchasing
-        </button>
-        <div class="mt-10 flex space-x-6 text-blue-600">
-            <a href="{% url 'scan' %}" class="flex flex-col items-center">
-                <i class="fas fa-qrcode text-4xl"></i>
-                <span class="mt-2 text-sm">Scan</span>
-            </a>
-            <a href="{% url 'cart' %}" class="flex flex-col items-center">
-                <i class="fas fa-shopping-cart text-4xl"></i>
-                <span class="mt-2 text-sm">Cart</span>
-            </a>
-            <a href="{% url 'profile' %}" class="flex flex-col items-center">
-                <i class="fas fa-user text-4xl"></i>
-                <span class="mt-2 text-sm">Profile</span>
-            </a>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <a href="{% url 'home' %}" style="text-decoration: none;"><div class="easy"><span class="easy2pay">Easy2Pay</span></div></a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="capdiv"><span class="caption">Shopping made <br>Faster & Efficient</span></div>
+    </div>
+
+    <!-- Image Placeholder -->
+    <div class="image-container">
+        <div class="slider">
+            <img src="{% static 'images/scan.jpg' %}" class="slide active">
+            <img src="{% static 'images/productf.jpg' %}" class="slide">
+            <img src="{% static 'images/cart.jpg' %}" class="slide">
+            <img src="{% static 'images/payment.jpg' %}" class="slide">
+        </div>
+        <div class="dots">
+            <span class="dot active" onclick="changeSlide(0)"></span>
+            <span class="dot" onclick="changeSlide(1)"></span>
+            <span class="dot" onclick="changeSlide(2)"></span>
+            <span class="dot" onclick="changeSlide(3)"></span>
         </div>
     </div>
+
+
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        
+        <a href="{% url 'scan' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-qrcode"></i><br>Scan
+        </div></a>
+        <a href="{% url 'cart' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-shopping-cart"></i><br>Cart
+        </div></a>
+        <a href="{% url 'offers' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-tag"></i><br>Offers
+        </div></a>
+        <a href="{% url 'points' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-gift"></i><br>Redeem Points
+        </div></a>
+        <a href="{% url 'profile' %}" style="text-decoration: none;"><div class="nav-item">
+            <i class="fa fa-user"></i><br>Profile
+        </div></a>
+    </div>
+</div>
+<script>
+    let currentIndex = 0;
+    const slides = document.querySelectorAll(".slide");
+    const dots = document.querySelectorAll(".dot");
+
+    function changeSlide(index) {
+        slides[currentIndex].classList.remove("active");
+        dots[currentIndex].classList.remove("active");
+
+        currentIndex = index;
+
+        slides[currentIndex].classList.add("active");
+        dots[currentIndex].classList.add("active");
+    }
+
+    function autoSlide() {
+        let nextIndex = (currentIndex + 1) % slides.length;
+        changeSlide(nextIndex);
+    }
+
+    setInterval(autoSlide, 3000);
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => changeSlide(index));
+    });
+</script>
 </body>
 </html>

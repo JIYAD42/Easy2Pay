@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--bo$)(5v8hvp_bj=3in7!vj-rf-f-f6bh@j+#hu32!c54wmp8+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.75.160', '0.0.0.0', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ourapp',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
@@ -142,15 +143,41 @@ EMAIL_HOST_PASSWORD = 'dghp rfsd qkzf vgpt'      # Replace with your Gmail passw
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',  # Use the verbose formatter
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'django_debug.log',
+            'formatter': 'verbose',  # Use the verbose formatter
         },
     },
     'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',  # Log INFO level and above
+            'propagate': True,
+        },
         'django.db.backends': {
             'level': 'DEBUG',
             'handlers': ['console'],
+        },
+        'yourapp': {  # Replace 'yourapp' with your actual app name
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',  # Log DEBUG level and above for your app
+            'propagate': False,
         },
     },
 }

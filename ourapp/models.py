@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth import get_user_model
 from django.db import models
 import qrcode
 from io import BytesIO
@@ -8,6 +9,7 @@ from django.conf import settings
 from decimal import Decimal
 import uuid
 from django.core.files.base import ContentFile
+from django.utils.timezone import now
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -55,6 +57,7 @@ class Product(models.Model):
     unique_code = models.CharField(max_length=255, unique=True, blank=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
     is_paid = models.BooleanField(default=False)
+    manufacturer = models.CharField(max_length=255, default="manfacturer")
 
 
     def save(self, *args, **kwargs):
@@ -123,6 +126,13 @@ class Offer(models.Model):
     discount_percentage = models.DecimalField(max_digits=5, decimal_places=2)
     valid_from = models.DateTimeField()
     valid_until = models.DateTimeField()
+    id = models.CharField(max_length=255, unique=True, blank=True, primary_key=True)
+
+    def save(self, *args, **kwargs):
+        # Generate unique code
+        if not self.id:
+            self.id = str(uuid.uuid4()).replace('-', '')[:12]
+        super().save(*args, **kwargs)
 
     def is_active(self):
         """
@@ -142,8 +152,20 @@ class Order(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=10, default='INR')
     is_paid = models.BooleanField(default=False)
+    offer = models.ForeignKey(Offer, null=True, blank=True, on_delete=models.SET_NULL)  # Add this line
+    redeemed_points = models.PositiveIntegerField(default=0)  # Add this line
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Order {self.razorpay_order_id} - {'Paid' if self.is_paid else 'Pending'}"
+    
+User = get_user_model()
+class PointTransaction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="point_transactions")
+    points = models.IntegerField()  # Can be positive (earned) or negative (spent)
+    date = models.DateTimeField(default=now)
+    description = models.CharField(max_length=255, blank=True, null=True)  # Optional description
+
+    def __str__(self):
+        return f"{self.user.email} - {self.points} points on {self.date}"
