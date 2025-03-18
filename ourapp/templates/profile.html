@@ -128,6 +128,22 @@
             margin-top: 5px;
         }
 
+        .his-btn{
+            width: 93%;
+            padding: 12px;
+            background: rgb(255, 255, 255);
+            color: rgb(0, 0, 0);
+            font-size: 16px;
+            text-align: center;
+            border-radius: 10px;
+            border: 2px solid black;    
+            cursor: pointer;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 140px;
+        }
+
         /* Logout Button */
         .logout-btn {
             width: 93%;
@@ -202,6 +218,9 @@
             <div class="info-value">{{ user_email }}</div>
         </div>
     </div>
+
+    <a href="{% url 'purchase_history' %}" style="text-decoration: none;"><button class="his-btn">Purchase History
+    </button></a>
 
     <!-- Logout Button -->
     <a href="{% url 'logout' %}" style="text-decoration: none;"><button class="logout-btn">

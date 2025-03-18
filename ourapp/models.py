@@ -156,6 +156,7 @@ class Order(models.Model):
     redeemed_points = models.PositiveIntegerField(default=0)  # Add this line
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Order {self.razorpay_order_id} - {'Paid' if self.is_paid else 'Pending'}"
@@ -169,3 +170,36 @@ class PointTransaction(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.points} points on {self.date}"
+    
+class PurchaseHistory(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name="purchase_history"
+    )
+    order = models.OneToOneField(
+        Order, 
+        on_delete=models.SET_NULL, 
+        null=True, blank=True,
+        related_name="purchase_history"
+    )
+    payment_id = models.CharField(max_length=255, blank=True, null=True)
+    total_amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Purchase by {self.user.email} on {self.date}"
+
+class PurchasedProduct(models.Model):
+    purchase = models.ForeignKey(
+        PurchaseHistory, 
+        on_delete=models.CASCADE, 
+        related_name="products"
+    )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product.name} @ {self.price_at_purchase} each"
+

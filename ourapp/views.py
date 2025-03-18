@@ -13,7 +13,7 @@ from django.core.cache import cache
 from django.conf import settings
 import random
 from django.http import HttpResponse
-from .models import Product, Cart, CartItem, Order, PointTransaction
+from .models import Product, Cart, CartItem, Order, PointTransaction, PurchaseHistory, PurchasedProduct
 import razorpay
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -265,22 +265,8 @@ def create_order(request):
         try:
             # Parse the incoming JSON data
             data = json.loads(request.body)
-            print("Received Amount:", data.get('amount'))
             logger.info(f"Received data: {data}")
 
-            # Extract and validate input data
-            amount_value = data.get('amount')
-            if amount_value is None:
-                amount = Decimal(100)  # Default ₹1 if missing
-                logger.warning("Amount not provided, using default: %s", amount)
-            else:
-                try:
-                    amount = Decimal(amount_value)
-                except (ValueError, TypeError) as e:
-                    logger.error("Invalid amount value: %s", amount_value)
-                    return JsonResponse({'error': 'Invalid amount value.'}, status=400)
-
-            currency = 'INR'
             user = request.user
             user_cart = Cart.objects.filter(user=user).first()
 
@@ -288,14 +274,16 @@ def create_order(request):
                 logger.warning("User  cart not found for user: %s", user.id)
                 return JsonResponse({'error': 'User  cart not found'}, status=400)
 
-            amount = max(amount, Decimal(1))  # Ensure minimum ₹1
+            # Calculate total amount from cart items
+            total_amount = sum(item.total_price() for item in user_cart.items.all())
+            amount = max(total_amount, Decimal(1))  # Ensure minimum ₹1
             amount_paise = int(amount * 100)  # Convert INR to paise
 
             # Create Razorpay order
             client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
             order_data = {
                 'amount': amount_paise,
-                'currency': currency,
+                'currency': 'INR',
                 'payment_capture': '1'
             }
             order = client.order.create(data=order_data)
@@ -307,11 +295,16 @@ def create_order(request):
                 cart=user_cart,
                 razorpay_order_id=order['id'],
                 amount=amount,  # INR
-                currency=currency
+                currency='INR'
             )
             logger.info(f"Order saved: {new_order.id}")
 
-            return JsonResponse(order)
+            # Return the order details including the Razorpay order ID
+            return JsonResponse({
+                'id': order['id'],
+                'amount': amount_paise,
+                'currency': 'INR'
+            })
 
         except Exception as e:
             logger.error("Error creating order: %s", str(e), exc_info=True)
@@ -380,15 +373,16 @@ def payment_success(request):
             total_amount = data.get('amount')
             used_points = data.get('used_points')
 
+            # Retrieve the order
             order = Order.objects.get(razorpay_order_id=order_id)
             order.razorpay_payment_id = payment_id
             order.is_paid = True
             order.save()
 
             user = order.cart.user
-            #total_amount_rupees = order.amount / 100
             points_earned = int(total_amount // 25)
 
+            # Handle used points
             if used_points > 0:
                 user.points -= used_points
                 PointTransaction.objects.create(
@@ -409,26 +403,34 @@ def payment_success(request):
 
             product_details = []
             if order.cart:
-                if order.cart.items.count() == 1:  # Single product purchase
-                    cart_item = order.cart.items.first()
+                purchase_history = PurchaseHistory.objects.create(
+                    user=user,
+                    order=order,
+                    payment_id=payment_id,
+                    total_amount_paid=total_amount,
+                    date=now()
+                )
+
+                # Process each cart item
+                for cart_item in order.cart.items.all():
                     cart_item.product.is_paid = True
                     cart_item.product.save()
+                    
                     product_details.append({
                         'name': cart_item.product.name,
                         'price': float(cart_item.product.price)
                     })
-                    cart_item.delete()  # Remove the single item from cart
-                else:
-                # If buying full cart, mark all items as paid
-                    for cart_item in order.cart.items.all():
-                        cart_item.product.is_paid = True
-                        cart_item.product.save()
-                        product_details.append({
-                            'name': cart_item.product.name,
-                            'price': float(cart_item.product.price)
-                        })
-                    order.cart.items.all().delete()
-                    order.cart.delete()
+                    
+                    # Save purchased product history
+                    PurchasedProduct.objects.create(
+                        purchase=purchase_history,
+                        product=cart_item.product,
+                        price_at_purchase=cart_item.product.price,
+                        quantity=cart_item.quantity
+                    )
+                    
+                    # Delete the cart item after processing
+                    cart_item.delete()  # Remove the item from cart
 
             context = {
                 'user': user,
@@ -586,3 +588,10 @@ def remove_from_cart(request, item_id):
         cart_item.delete()
         return JsonResponse({"success": True})
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+@login_required
+def purchase_history(request):
+    user = request.user
+    history = PurchaseHistory.objects.filter(user=user).order_by('-date')
+
+    return render(request, 'purchase_history.html', {'history': history})

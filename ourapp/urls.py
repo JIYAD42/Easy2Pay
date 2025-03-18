@@ -22,4 +22,5 @@ urlpatterns = [
     path('profile-image/<str:name>/', views.generate_profile_image, name='profile_image'),
     path('generate-receipt/<str:order_id>/', views.generate_receipt, name='generate_receipt'),
     path("remove_from_cart/<int:item_id>/", views.remove_from_cart, name="remove_from_cart"),
+    path('purchase-history/', views.purchase_history, name='purchase_history'),
 ]
