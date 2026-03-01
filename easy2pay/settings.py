@@ -134,8 +134,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'easy2payplus@gmail.com'  # Replace with your Gmail address
-EMAIL_HOST_PASSWORD = 'dghp rfsd qkzf vgpt'      # Replace with your Gmail password or App Password
+EMAIL_HOST_USER = '*****************'  
+EMAIL_HOST_PASSWORD = '***************'     
 
 
 
@@ -194,5 +194,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Razorpay credentials
-RAZORPAY_API_KEY = "rzp_test_upissfBVezKCzn"
-RAZORPAY_API_SECRET = "VBNYdtB401hBnXH0c6i6R1iZ"
+RAZORPAY_API_KEY = "*********************"
+RAZORPAY_API_SECRET = "********************"
